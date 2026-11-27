@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.zip
+*.crx
+*.pem
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vite / tooling cache
+.vite/
+.cache/
+*.tsbuildinfo
+
+# Test and browser profiles (Playwright / DevTools MCP)
+.playwright-mcp/
+playwright-report/
+test-results/
+.browser-profile/
+
+# Local agent state
+.opencode/
+
+# Project docs and agent files
+README.md
+AGENTS.md
+ARCHITECTURE.md
+DESIGN.md
+PROMPTS.md
+ROADMAP.md
