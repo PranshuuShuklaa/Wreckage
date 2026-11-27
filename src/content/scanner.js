@@ -5,15 +5,24 @@ const skip = 'script,style,noscript,iframe,canvas,video,[hidden],template'
 
 export function scanElements(width, height) {
   const items = []
+  // Taking a wrapper as one body would move or clone the embedded media too.
+  const mediaAncestors = new Set()
+  for (const media of globalThis.document.body.querySelectorAll('iframe,canvas,video')) {
+    for (let el = media.parentElement; el && !mediaAncestors.has(el); el = el.parentElement) {
+      mediaAncestors.add(el)
+    }
+  }
   function visit(el) {
     if (el.matches(skip)) return false
     const rect = el.getBoundingClientRect()
     const area = rect.width * rect.height
-    const eligible = rect.width >= MIN_WIDTH && rect.height >= MIN_HEIGHT &&
+    const eligible = !mediaAncestors.has(el) && rect.width >= MIN_WIDTH && rect.height >= MIN_HEIGHT &&
       area <= width * height * MAX_AREA_SHARE && rect.right > 0 && rect.bottom > 0 &&
       rect.left < width && rect.top < height &&
       el.checkVisibility({ visibilityProperty: true, opacityProperty: true })
-    if (eligible && (el.matches(atomic) || (el.matches('a') &&
+    const isPositionedHeader = eligible && el.matches('header,[role="banner"]') &&
+      ['sticky', 'fixed'].includes(globalThis.getComputedStyle(el).position)
+    if (eligible && (isPositionedHeader || el.matches(atomic) || (el.matches('a') &&
         !Array.from(el.children).some(child => /^(block|flex|grid|table|list-item|flow-root)/.test(globalThis.getComputedStyle(child).display))))) {
       items.push({ el, rect, area })
       return true

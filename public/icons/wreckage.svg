@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <title>Wreckage</title>
+  <style>
+    rect { fill: none; }
+    @media (min-width: 128px) { rect { fill: #FFC21A; } }
+    @media (max-width: 32px) { path, rect { stroke-width: 6; } }
+  </style>
+  <g stroke="#172033" stroke-width="4" stroke-linejoin="round">
+    <path d="M6 93h116"/>
+    <rect x="29" y="28" width="68" height="68" transform="rotate(12 63 62)"/>
+  </g>
+</svg>

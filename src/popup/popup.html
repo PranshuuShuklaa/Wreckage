@@ -1,10 +1,27 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Wreckage</title>
-    <link rel="stylesheet" href="./popup.css">
-    <script type="module" src="./popup.js"></script>
-  </head>
-  <body>Press <kbd>Alt+G</kbd> on a webpage to toggle Wreckage.</body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wreckage</title>
+  <link rel="stylesheet" href="./popup.css">
+  <script type="module" src="./popup.js"></script>
+</head>
+<body>
+  <header><h1>Wreckage</h1><kbd>Alt+G</kbd></header>
+  <main>
+    <section class="instrument" aria-label="Gravity">
+      <div id="dial" role="slider" tabindex="0" aria-label="Gravity" aria-describedby="help" aria-valuemin="0" aria-valuemax="2" aria-valuenow="1" aria-valuetext="1.0 g · down" title="Drag or use arrow keys to move the ball">
+        <span id="ball"></span>
+      </div>
+      <span id="help" class="sr">Drag or use the arrow keys to move the ball. Distance from center sets strength.</span>
+      <output id="reading" aria-live="off">1.0 g · down</output>
+    </section>
+    <section id="modes" aria-label="Mode"></section>
+    <footer>
+      <button id="toggle" disabled>Drop the page</button>
+      <p id="notice" role="status" hidden>Can't run on this page. Try a regular website.</p>
+    </footer>
+  </main>
+</body>
 </html>

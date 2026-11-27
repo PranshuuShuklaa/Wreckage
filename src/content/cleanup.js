@@ -4,8 +4,10 @@ import { restoreElements } from './builder.js'
 export function cleanup(session) {
   const { cancel, removeInput, engine, items, root, style, x, y, onKey } = session
   cancel?.()
+  session.removeResize?.()
   session.removeSettings?.()
   session.modes?.clear()
+  session.removeHud?.()
   removeInput?.()
   globalThis.removeEventListener('keydown', onKey, true)
   restoreElements(items)

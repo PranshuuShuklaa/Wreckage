@@ -1,10 +1,11 @@
+import { showHud } from './hud.js'
 import { createModes } from './modes.js'
 import { loadSettings } from '../shared/settings.js'
 import { cleanup } from './cleanup.js'
 import { attachInput } from './input.js'
 import { scanElements } from './scanner.js'
 import { detachElements } from './builder.js'
-import { createWorld } from './world.js'
+import { createWorld, resizeWorld } from './world.js'
 import { animate } from './loop.js'
 
 let session
@@ -38,6 +39,7 @@ export function start() {
     globalThis.addEventListener('keydown', onKey, true)
     const { mouse, remove } = attachInput(engine, layer)
     session.removeInput = remove
+    session.removeHud = showHud(layer)
     const renders = [...items]
     session.renders = renders
     const modes = createModes(engine, items, renders, layer, mouse)
@@ -60,6 +62,22 @@ export function start() {
       if (!updated.has('gravity')) modes.setGravity(settings.gravity)
       if (!updated.has('mode')) modes.setMode(settings.mode)
     }).catch(error => console.warn('[Wreckage] Could not load settings.', error.message))
+    let previousWidth = width
+    let previousHeight = height
+    let previousScale = 1
+    const onResize = () => {
+      const w = globalThis.document.compatMode === 'BackCompat' ? globalThis.innerWidth : root.clientWidth
+      const h = globalThis.innerHeight
+      if (!w || !h || (w === previousWidth && h === previousHeight)) return
+      const scale = Math.min(1, w / width, h / height)
+      resizeWorld(engine, w, h, previousWidth, previousHeight, scale / previousScale,
+        new Set([...items, ...renders]))
+      previousScale = scale
+      previousWidth = w
+      previousHeight = h
+    }
+    globalThis.addEventListener('resize', onResize)
+    session.removeResize = () => globalThis.removeEventListener('resize', onResize)
     session.cancel = animate(engine, renders)
   } catch (error) {
     stop()
@@ -81,7 +99,7 @@ if (globalThis.wreckageListenerId !== chrome.runtime.id) {
     else if (message.type === 'WRECK_TOGGLE') {
       if (session) stop()
       else start()
-    } else return
+    } else if (message.type !== 'GET_STATE') return
     respond({ type: 'STATE', active: Boolean(session), bodyCount: session?.renders.length ?? 0 })
   })
   globalThis.wreckageListenerId = chrome.runtime.id

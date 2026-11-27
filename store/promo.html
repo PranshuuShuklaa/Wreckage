@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wreckage promo tiles</title>
+  <style>
+    @font-face {
+      font-family: Archivo;
+      src: url("../src/popup/archivo.woff2") format("woff2");
+      font-weight: 450 800;
+      font-stretch: 100% 125%;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #E6E9EB; }
+    main { display: grid; justify-items: start; gap: 24px; }
+    .tile {
+      position: relative;
+      container-type: inline-size;
+      overflow: hidden;
+      background: #D3D8DB;
+      color: #172033;
+    }
+    #large { width: 1280px; height: 800px; }
+    #small { width: 440px; height: 280px; }
+    .square {
+      position: absolute;
+      top: 14%;
+      right: 9%;
+      width: 24%;
+      aspect-ratio: 1;
+      border: max(1.5px, .35cqw) solid currentColor;
+      transform: rotate(12deg);
+    }
+    .wordmark {
+      position: absolute;
+      left: 5%;
+      bottom: 6%;
+      font: 800 15.2cqw/1 Archivo, sans-serif;
+      font-stretch: 125%;
+      letter-spacing: -.045em;
+    }
+  </style>
+</head>
+<body>
+  <main aria-label="Store promo tiles">
+    <section class="tile" id="large" aria-label="1280 by 800 promo tile">
+      <span class="square" aria-hidden="true"></span>
+      <span class="wordmark">Wreckage</span>
+    </section>
+    <section class="tile" id="small" aria-label="440 by 280 promo tile">
+      <span class="square" aria-hidden="true"></span>
+      <span class="wordmark">Wreckage</span>
+    </section>
+  </main>
+</body>
+</html>
