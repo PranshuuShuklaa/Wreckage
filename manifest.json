@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Wreckage",
+  "version": "0.1.0",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "commands": {
+    "toggle": {
+      "suggested_key": {
+        "default": "Alt+G"
+      },
+      "description": "Toggle Wreckage on the active tab"
+    }
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  }
+}
