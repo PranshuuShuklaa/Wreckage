@@ -6,6 +6,10 @@ Wreckage is a Chrome extension built with Matter.js. It simulates up to 150 visi
 
 ## Install in Chrome
 
+[![Wreckage open on Wikipedia](docs/media/install-preview.jpg)](docs/media/install-and-open.mp4)
+
+[Watch the 30-second installation walkthrough](docs/media/install-and-open.mp4)
+
 1. [Download Wreckage ZIP](downloads/wreckage.zip?raw=true) and extract it to a folder you can keep.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
