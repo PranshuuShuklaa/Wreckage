@@ -4,6 +4,14 @@ Press **Alt+G** on a webpage to make its headings, images, buttons, and paragrap
 
 Wreckage is a Chrome extension built with Matter.js. It simulates up to 150 visible page elements at a time.
 
+## Install in Chrome
+
+1. [Download Wreckage ZIP](downloads/wreckage.zip?raw=true) and extract it to a folder you can keep.
+2. Open `chrome://extensions` and enable **Developer mode**.
+3. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
+
+Open a regular webpage and press **Alt+G** to try it. Chrome loads Wreckage from the folder you selected, so keep that folder in place.
+
 ## Install from source
 
 1. Clone the repository and open a terminal in its root directory.
