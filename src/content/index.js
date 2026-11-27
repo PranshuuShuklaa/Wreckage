@@ -1,3 +1,5 @@
+import { createModes } from './modes.js'
+import { loadSettings } from '../shared/settings.js'
 import { cleanup } from './cleanup.js'
 import { attachInput } from './input.js'
 import { scanElements } from './scanner.js'
@@ -34,8 +36,31 @@ export function start() {
     detachElements(items, layer)
     root.style.setProperty('overflow', 'hidden', 'important')
     globalThis.addEventListener('keydown', onKey, true)
-    session.removeInput = attachInput(engine, layer)
-    session.cancel = animate(engine, items)
+    const { mouse, remove } = attachInput(engine, layer)
+    session.removeInput = remove
+    const renders = [...items]
+    session.renders = renders
+    const modes = createModes(engine, items, renders, layer, mouse)
+    session.modes = modes
+    const updated = new Set()
+    session.update = (key, value) => {
+      updated.add(key)
+      if (key === 'mode') modes.setMode(value)
+      else if (value) modes.setGravity(value)
+    }
+    const onSettings = changes => {
+      for (const key of ['gravity', 'mode']) {
+        if (changes[key]) session.update(key, changes[key].newValue)
+      }
+    }
+    chrome.storage.sync.onChanged.addListener(onSettings)
+    session.removeSettings = () => chrome.storage.sync.onChanged.removeListener(onSettings)
+    loadSettings().then(settings => {
+      if (session?.modes !== modes) return
+      if (!updated.has('gravity')) modes.setGravity(settings.gravity)
+      if (!updated.has('mode')) modes.setMode(settings.mode)
+    }).catch(error => console.warn('[Wreckage] Could not load settings.', error.message))
+    session.cancel = animate(engine, renders)
   } catch (error) {
     stop()
     throw error
@@ -50,11 +75,14 @@ export function stop() {
 // The command can inject this bundle repeatedly into the same isolated world.
 if (globalThis.wreckageListenerId !== chrome.runtime.id) {
   chrome.runtime.onMessage.addListener((message, sender, respond) => {
-    if (message.type === 'WRECK_TOGGLE' && sender.id === chrome.runtime.id) {
+    if (sender.id !== chrome.runtime.id) return
+    if (message.type === 'SET_MODE') session?.update('mode', message.mode)
+    else if (message.type === 'SET_GRAVITY') session?.update('gravity', message.gravity ?? message)
+    else if (message.type === 'WRECK_TOGGLE') {
       if (session) stop()
       else start()
-      respond({ type: 'STATE', active: Boolean(session), bodyCount: session?.items.length ?? 0 })
-    }
+    } else return
+    respond({ type: 'STATE', active: Boolean(session), bodyCount: session?.renders.length ?? 0 })
   })
   globalThis.wreckageListenerId = chrome.runtime.id
 }

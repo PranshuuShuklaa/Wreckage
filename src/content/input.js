@@ -14,7 +14,7 @@ export function attachInput(engine, layer) {
   globalThis.addEventListener('blur', release)
   globalThis.addEventListener('mouseup', release, true)
   overlay.addEventListener('touchcancel', release)
-  return () => {
+  function remove() {
     globalThis.removeEventListener('blur', release)
     globalThis.removeEventListener('mouseup', release, true)
     overlay.removeEventListener('touchcancel', release)
@@ -25,4 +25,5 @@ export function attachInput(engine, layer) {
     Matter.Mouse.clearSourceEvents(mouse)
     overlay.remove()
   }
+  return { mouse, remove }
 }
