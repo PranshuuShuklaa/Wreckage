@@ -7,6 +7,7 @@ export function cleanup(session) {
   removeInput?.()
   globalThis.removeEventListener('keydown', onKey, true)
   restoreElements(items)
+  session.layer?.remove()
   if (style === null) root.removeAttribute('style')
   else root.setAttribute('style', style)
   globalThis.scrollTo({ left: x, top: y, behavior: 'instant' })

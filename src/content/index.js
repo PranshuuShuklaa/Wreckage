@@ -17,17 +17,24 @@ function onKey(event) {
 
 export function start() {
   if (session) return
-  const root = globalThis.document.documentElement
-  const width = root.clientWidth
-  const height = root.clientHeight
+  const root = globalThis.document.scrollingElement ?? globalThis.document.documentElement
+  const width = globalThis.document.compatMode === 'BackCompat' ? globalThis.innerWidth : root.clientWidth
+  const height = globalThis.innerHeight
   const items = scanElements(width, height)
   const engine = createWorld(items, width, height)
   session = { items, engine, root, onKey, style: root.getAttribute('style'), x: globalThis.scrollX, y: globalThis.scrollY }
   try {
-    detachElements(items)
+    // The top layer escapes fixed-position containing blocks on body and html.
+    const layer = globalThis.document.createElement('div')
+    session.layer = layer
+    layer.popover = 'manual'
+    layer.style.cssText = 'all:initial;position:fixed;inset:0;pointer-events:none'
+    globalThis.document.body.append(layer)
+    layer.showPopover()
+    detachElements(items, layer)
     root.style.setProperty('overflow', 'hidden', 'important')
     globalThis.addEventListener('keydown', onKey, true)
-    session.removeInput = attachInput(engine)
+    session.removeInput = attachInput(engine, layer)
     session.cancel = animate(engine, items)
   } catch (error) {
     stop()

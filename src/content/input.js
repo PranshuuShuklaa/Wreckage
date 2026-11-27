@@ -1,10 +1,10 @@
 import Matter from 'matter-js'
 import { LAYER } from '../shared/settings.js'
 
-export function attachInput(engine) {
+export function attachInput(engine, layer) {
   const overlay = globalThis.document.createElement('div')
-  overlay.style.cssText = `all:initial;position:fixed;inset:0;z-index:${LAYER + 1};touch-action:none;cursor:grab`
-  globalThis.document.body.append(overlay)
+  overlay.style.cssText = `all:initial;position:fixed;inset:0;z-index:${LAYER + 1};pointer-events:auto;touch-action:none;cursor:grab`
+  layer.append(overlay)
   const mouse = Matter.Mouse.create(overlay)
   const constraint = Matter.MouseConstraint.create(engine, { mouse })
   Matter.Composite.add(engine.world, constraint)

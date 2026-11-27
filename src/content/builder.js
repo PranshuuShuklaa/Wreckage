@@ -1,7 +1,7 @@
 import { LAYER } from '../shared/settings.js'
 
 function trapped(el) {
-  for (let parent = el.parentElement; parent && parent !== el.ownerDocument.body; parent = parent.parentElement) {
+  for (let parent = el.parentElement; parent; parent = parent.parentElement) {
     const css = globalThis.getComputedStyle(parent)
     if ([css.transform, css.filter, css.perspective].some(value => value !== 'none') ||
         /layout|paint|strict|content/.test(css.contain)) return true
@@ -26,14 +26,16 @@ function makeVisual(el) {
   return clone
 }
 
-export function detachElements(items) {
+export function detachElements(items, layer) {
   // Capture flow styles before any sibling selectors or layout can change.
   for (const item of items) {
     const { el, rect } = item
     item.originalStyle = el.getAttribute('style')
-    item.visual = trapped(el) ? makeVisual(el) : el
-    if (item.visual !== el) continue
     const css = globalThis.getComputedStyle(el)
+    // An empty inline placeholder loses the text baseline and wrapped line boxes.
+    const keepInlineFlow = el.matches('a') && css.display.startsWith('inline')
+    item.visual = trapped(el) || keepInlineFlow ? makeVisual(el) : el
+    if (item.visual !== el) continue
     const placeholder = el.ownerDocument.createElement('span')
     placeholder.setAttribute('aria-hidden', 'true')
     for (const key of ['position', 'inset', 'display', 'margin', 'float', 'clear', 'vertical-align',
@@ -48,7 +50,7 @@ export function detachElements(items) {
     const { el, rect, placeholder, visual } = item
     if (visual === el) el.before(placeholder)
     else {
-      el.ownerDocument.body.append(visual)
+      layer.append(visual)
       el.style.setProperty('opacity', '0', 'important')
     }
     // Record detachment even if the page later removes the placeholder.
